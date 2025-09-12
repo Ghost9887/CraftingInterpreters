@@ -1,5 +1,9 @@
 #include "interpreter.hpp"
 
+/*this is where we define all the methods and variables of class Interpreter*/
+
+bool Interpreter::hadError = false;
+
 void Interpreter::runFile(char *fileName){
   std::cout << "running file: " << fileName << "\n"; 
 
@@ -30,11 +34,13 @@ void Interpreter::runPrompt(){
   std::getline(std::cin, input); // we use getline as std::cin >> cuts off after whitespace
 
   run(input);
+  Interpreter::hadError = false;
 }
 
 void Interpreter::run(std::string fileContent){
   std::cout << "running code" << "\n";
   std::cout << fileContent << "\n";
+  if(Interpreter::hadError) exit(EXIT_FAILURE);
 }
 
 void Interpreter::error(int line, std::string message){
@@ -44,5 +50,5 @@ void Interpreter::error(int line, std::string message){
 void Interpreter::report(int line, std::string where, std::string message){
   //prints the error
   std::cerr << "[line" << line << "] Error" << where << ": " << message << "\n";
-  hadError = true;
+  Interpreter::hadError = true;
 }
