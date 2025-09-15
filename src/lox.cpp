@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
 
-   Interpreter interpreter;
+  Interpreter interpreter;
 
   if(argc > 2){
     std::cout << "Usage: ./program 'file name'" << "\n";
