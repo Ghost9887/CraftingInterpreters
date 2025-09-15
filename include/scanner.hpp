@@ -22,6 +22,14 @@
       void addToken(TokenType type);
       void addToken(TokenType type, std::any literal);
       bool match(char expected);
+      char peek();
+      void string();
+      bool isDigit(char c);
+      void number();
+      char peekNext();
+      bool isAlpha(char c);
+      bool isAlphaNumeric(char c);
+      void identifier();
   };
 
 #endif

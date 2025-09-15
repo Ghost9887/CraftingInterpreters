@@ -1,5 +1,10 @@
 #include "scanner.hpp"
 
+Interpreter interpreter;
+
+//Map
+
+
 Scanner::Scanner(std::string source) 
 : source(std::move(source)){}
 
@@ -17,7 +22,6 @@ std::vector<Token> Scanner::scanTokens(){
 }
 
 void Scanner::scanToken(){
-  Interpreter interpreter;
   char c = advance();
   switch(c){
     case '(':
@@ -62,10 +66,97 @@ void Scanner::scanToken(){
     case '>':
       addToken(match('=') ? TokenType::GREATER_EQUAL : TokenType::GREATER);
       break;
+    case '/':
+      if(match('/')){
+        //a comment goes all the way to the end of the line
+        while(peek() != '\n' && !isAtEnd()) advance();
+      }else{
+        addToken(TokenType::SLASH);
+      }
+      break;
+    case ' ':
+    case '\r':
+    case '\t':
+      break;
+    case '\n':
+      line++;
+      break;
+    case '"':
+      string();
+      break;
+    case 'o':
+      if(peek() == 'r'){
+        addToken(TokenType::OR);
+      }
+      break;
     default:
-      interpreter.error(line, "Unexpected character");
+      if(isDigit(c)){
+        number();
+      }
+      else if(isAlpha(c)){
+        identifier();
+      }
+      else{
+        interpreter.error(line, "Unexpected character");
+      }
       break;
   }
+}
+
+void Scanner::identifier(){
+  while(isAlphaNumeric(peek())) advance();
+  addToken(TokenType::IDENTIFIER);
+}
+
+bool Scanner::isAlpha(char c){
+  return (c >= 'a' && c <= 'z') ||
+         (c >= 'A' && c <= 'Z') ||
+         c == '_';
+}
+
+bool Scanner::isAlphaNumeric(char c){
+  return isAlpha(c) || isDigit(c);
+}
+
+void Scanner::number(){
+  while(isDigit(peek())) advance();
+  //Look for decimal
+  if(peek() == '.' && isDigit(peekNext())){
+    advance();
+
+    while(isDigit(peek())) advance();
+  }
+  addToken(TokenType::NUMBER, stod(source.substr(start, current), NULL));
+}
+
+char Scanner::peekNext(){
+  if(current + 1 >= (int)source.length()) return '\0';
+  return source[current + 1];
+}
+
+bool Scanner::isDigit(char c){
+  return c >= '0' && c <= '9';
+}
+
+void Scanner::string(){
+  while(peek() != '"' && !isAtEnd()){
+    if(peek() == '\n') line++;
+    advance();
+  }
+  if(isAtEnd()){
+    interpreter.error(line, "Unterminated string");
+    return;
+  }
+  //The closing "";
+  advance();
+
+  std::string value = source.substr(start + 1, current - 1);
+  addToken(TokenType::STRING, value);
+}
+
+char Scanner::peek(){
+  if(isAtEnd()) return '\0';
+  return source[current];
 }
 
 bool Scanner::match(char expected){
