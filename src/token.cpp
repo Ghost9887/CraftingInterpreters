@@ -7,5 +7,5 @@ Token::Token(TokenType type, std::string lexeme, std::any literal, int line)
 
 //print method
 void Token::print() const{
-  std::cout << "Token(" << lexeme << ") at line " << line << "\n";
+  std::cout << type << "(" << lexeme << ") at line " << line << "\n";
 }

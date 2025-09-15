@@ -2,7 +2,25 @@
 
 Interpreter interpreter;
 
-//Map
+void Scanner::initMap(){
+  //Map
+  keywords["and"] = TokenType::AND;
+  keywords["class"] = TokenType::CLASS;
+  keywords["else"] = TokenType::ELSE;
+  keywords["false"] = TokenType::FALSE;
+  keywords["for"] = TokenType::FOR;
+  keywords["fun"] = TokenType::FUN;
+  keywords["if"] = TokenType::IF;
+  keywords["nil"] = TokenType::NIL;
+  keywords["or"] = TokenType::OR;
+  keywords["print"] = TokenType::PRINT;
+  keywords["return"] = TokenType::RETURN;
+  keywords["super"] = TokenType::SUPER;
+  keywords["this"] = TokenType::THIS;
+  keywords["true"] = TokenType::TRUE;
+  keywords["var"] = TokenType::VAR;
+  keywords["while"] = TokenType::WHILE;
+}
 
 
 Scanner::Scanner(std::string source) 
@@ -105,7 +123,11 @@ void Scanner::scanToken(){
 
 void Scanner::identifier(){
   while(isAlphaNumeric(peek())) advance();
-  addToken(TokenType::IDENTIFIER);
+  std::string text = source.substr(start, current);
+  auto key = keywords.find(text);
+  TokenType type;
+  if(key == keywords.end()) type = TokenType::IDENTIFIER;
+  addToken(type);
 }
 
 bool Scanner::isAlpha(char c){

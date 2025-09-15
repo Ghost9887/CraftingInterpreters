@@ -21,7 +21,7 @@ void Interpreter::runFile(char *fileName){
   //std::cout << fileContent << "\n";
     
   //run the program
-  run(fileContent);
+  run(&fileContent);
 }
 
 void Interpreter::runPrompt(){
@@ -33,13 +33,17 @@ void Interpreter::runPrompt(){
   std::string input;
   std::getline(std::cin, input); // we use getline as std::cin >> cuts off after whitespace
 
-  run(input);
+  run(&input);
   Interpreter::hadError = false;
 }
 
-void Interpreter::run(std::string fileContent){
+void Interpreter::run(std::string *fileContent){
   std::cout << "running code" << "\n";
-  std::cout << fileContent << "\n";
+  Scanner scanner = Scanner(*fileContent);
+  std::vector<Token> tokens = scanner.scanTokens();
+  for(Token token : tokens){
+    token.print();
+  }
   if(Interpreter::hadError) exit(EXIT_FAILURE);
 }
 

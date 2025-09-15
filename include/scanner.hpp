@@ -13,6 +13,8 @@
     private:
       const std::string source;
       std::vector<Token> tokens;
+      std::map<std::string, TokenType> keywords;
+      void initMap();
       int start;
       int current;
       int line;

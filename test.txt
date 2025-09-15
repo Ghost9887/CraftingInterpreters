@@ -1,4 +1,4 @@
+for
+if
+and
 hello
-world
-this is the first test file
-of the new language
